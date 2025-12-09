@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Production Guest Link Generator</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f3f4f6;
+            color: #1f2937;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .header {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .generated-link {
+            background: #f0f9ff;
+            border: 2px solid #2563eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .url-display {
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+        .setup-instructions {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .example-urls {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 Production Guest Link Generator</h1>
+            <p>Generate SE Ranking style URLs that work from any location</p>
+        </div>
+
+        <div class="card">
+            <h2>🔧 Domain Configuration</h2>
+            <form id="domainForm">
+                <div class="form-group">
+                    <label for="domain">Your Domain</label>
+                    <input type="text" id="domain" placeholder="e.g., reports.obeliskinfotech.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="clientName">Client Name</label>
+                    <input type="text" id="clientName" placeholder="e.g., Y Group Remodeling" required>
+                </div>
+                <button type="submit" class="btn">🚀 Generate Production URLs</button>
+            </form>
+
+            <div id="generatedResults" style="display: none;">
+                <div class="generated-link">
+                    <h3>✅ Production URLs Generated</h3>
+                    
+                    <h4>📋 Admin Panel URL:</h4>
+                    <div class="url-display" id="adminUrl"></div>
+                    
+                    <h4>🔗 Guest Report URL (SE Ranking Format):</h4>
+                    <div class="url-display" id="guestUrl"></div>
+                    
+                    <button class="btn" onclick="copyToClipboard('guestUrl')">📋 Copy Guest Link</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🎯 SE Ranking Format Examples</h2>
+            <div class="example-urls">
+                <h4>SE Ranking Original:</h4>
+                <code>https://online.seranking.com/guest.html?site_id=10756214&hv=0&hash=8211b2ad&sections%5B3%5D=audit&continue=admin.audit.site_id-10756214.html#/</code>
+                
+                <h4 style="margin-top: 15px;">Your Format:</h4>
+                <code>https://reports.yourdomain.com/guest-report.html?client_id=10756214&token=abc123&hv=0&hash=8211b2ad&sections%5B3%5D=audit&period=Dec2024&continue=admin.audit.client_id-10756214.html#/</code>
+            </div>
+        </div>
+
+        <div class="setup-instructions">
+            <h3>⚠️ Setup Required for Working URLs</h3>
+            <ol>
+                <li><strong>Get Web Hosting:</strong> You need a domain like <code>reports.obeliskinfotech.com</code></li>
+                <li><strong>Upload Files:</strong> Upload these files to your web server:
+                    <ul>
+                        <li><code>guest-link-admin-clean.html</code> (Admin panel)</li>
+                        <li><code>guest-report.html</code> (Client reports)</li>
+                    </ul>
+                </li>
+                <li><strong>Update URLs:</strong> Replace localhost/computer paths with your domain</li>
+                <li><strong>Test:</strong> Access admin panel at your domain</li>
+                <li><strong>Share:</strong> Generated URLs will work from anywhere</li>
+            </ol>
+        </div>
+
+        <div class="card">
+            <h2>🚀 Quick Hosting Options</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px;">
+                    <h4>🔗 GitHub Pages (Free)</h4>
+                    <p>Upload files to GitHub repository, enable Pages</p>
+                    <code>username.github.io/seo-reports</code>
+                </div>
+                <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px;">
+                    <h4>☁️ Netlify (Free)</h4>
+                    <p>Drag & drop files, get instant URL</p>
+                    <code>amazing-name-123.netlify.app</code>
+                </div>
+                <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px;">
+                    <h4>🌐 Your Domain</h4>
+                    <p>Upload to your existing website</p>
+                    <code>yourdomain.com/reports</code>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('domainForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const domain = document.getElementById('domain').value.trim();
+            const clientName = document.getElementById('clientName').value.trim();
+            
+            if (!domain || !clientName) {
+                alert('Please fill in both domain and client name');
+                return;
+            }
+            
+            generateProductionUrls(domain, clientName);
+        });
+        
+        function generateProductionUrls(domain, clientName) {
+            const clientId = Math.floor(Math.random() * 90000000) + 10000000; // 8-digit ID
+            const token = generateToken();
+            const hash = generateHash();
+            const timestamp = Date.now();
+            
+            // Clean domain (remove http/https if present)
+            const cleanDomain = domain.replace(/^https?:\/\//, '');
+            
+            // Generate SE Ranking style URLs
+            const adminUrl = `https://${cleanDomain}/guest-link-admin-clean.html`;
+            
+            const guestUrl = `https://${cleanDomain}/guest-report.html?client_id=${clientId}&token=${token}&hv=0&hash=${hash}&sections%5B3%5D=audit&period=${encodeURIComponent('December 2024')}&client=${encodeURIComponent(clientName)}&continue=admin.audit.client_id-${clientId}.html#/`;
+            
+            // Display results
+            document.getElementById('adminUrl').textContent = adminUrl;
+            document.getElementById('guestUrl').textContent = guestUrl;
+            document.getElementById('generatedResults').style.display = 'block';
+            
+            console.log('Generated URLs:');
+            console.log('Admin:', adminUrl);
+            console.log('Guest:', guestUrl);
+        }
+        
+        function generateToken() {
+            return Array.from({length: 32}, () => Math.floor(Math.random() * 16).toString(16)).join('');
+        }
+        
+        function generateHash() {
+            return Array.from({length: 8}, () => Math.floor(Math.random() * 16).toString(16)).join('');
+        }
+        
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ URL copied to clipboard!\\n\\nThis URL will work from any location once your files are hosted at the specified domain.');
+            }).catch(() => {
+                // Fallback
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('✅ URL copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>SEO Dashboard - Working Guest Link Manager</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .card h2 {
+            color: #2563eb;
+            font-size: 20px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+        }
+        
+        .btn-success {
+            background: #10b981;
+        }
+        
+        .alert {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+        }
+        
+        .alert-success {
+            background: #f0fdf4;
+            color: #16a34a;
+            border-left-color: #16a34a;
+        }
+        
+        .alert-error {
+            background: #fef2f2;
+            color: #dc2626;
+            border-left-color: #dc2626;
+        }
+        
+        .generated-link {
+            background: #f0f9ff;
+            border: 2px solid #2563eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .generated-link h3 {
+            color: #1e40af;
+            margin-bottom: 15px;
+        }
+        
+        .link-details {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .copy-link {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            word-break: break-all;
+        }
+        
+        .copy-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            flex-shrink: 0;
+            margin-left: 10px;
+        }
+        
+        .guest-links-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .guest-links-table th,
+        .guest-links-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .guest-links-table th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .status-active {
+            background: #d1fae5;
+            color: #059669;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .file-upload {
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .file-upload:hover {
+            border-color: #2563eb;
+            background: #f0f9ff;
+        }
+        
+        .file-upload.dragover {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+        
+        .file-upload-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+        
+        .file-upload-text {
+            font-size: 18px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        
+        .file-upload-subtext {
+            font-size: 14px;
+            color: #9ca3af;
+        }
+        
+        .preview-section {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .preview-section h3 {
+            color: #374151;
+            margin-bottom: 15px;
+        }
+        
+        .data-preview {
+            max-height: 300px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔗 Working Guest Link Manager</h1>
+        <p>Create working shareable SEO reports - No JavaScript errors!</p>
+    </div>
+
+    <div class="container">
+        <!-- Upload Section -->
+        <div class="card">
+            <h2>📁 Create Guest Link</h2>
+            
+            <form id="guestLinkForm">
+                <div class="form-group">
+                    <label for="clientName">Client Name <span style="color: #dc2626;">*</span></label>
+                    <input type="text" id="clientName" placeholder="Enter client name (e.g., Y Group Remodeling)" required>
+                    <small style="color: #6b7280; font-size: 14px;">Required - will be auto-filled from filename if available</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reportType">Report Type</label>
+                    <select id="reportType">
+                        <option value="demo">Demo Report (with sample data)</option>
+                        <option value="upload">Upload Real Data File (CSV/Excel)</option>
+                    </select>
+                    <small style="color: #6b7280; font-size: 14px;">Choose "Upload" if you have your own SEO data file</small>
+                </div>
+                
+                <div class="form-group" id="fileUploadGroup" style="display: none;">
+                    <label>Data File (CSV/Excel)</label>
+                    <div class="file-upload" onclick="document.getElementById('dataFile').click()">
+                        <div class="file-upload-icon">📄</div>
+                        <div class="file-upload-text">Click to select file or drag & drop</div>
+                        <div class="file-upload-subtext">Supported formats: CSV, XLS, XLSX</div>
+                        <input type="file" id="dataFile" accept=".csv,.xls,.xlsx" style="display: none;">
+                    </div>
+                    <div id="selectedFile" style="margin-top: 10px; font-weight: 600; color: #059669; display: none;"></div>
+                </div>
+                
+                <div class="preview-section" id="dataPreview" style="display: none;">
+                    <h3>📊 Data Preview</h3>
+                    <div class="data-preview" id="previewContent"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reportPeriod">Report Period</label>
+                    <input type="text" id="reportPeriod" value="December 02-07, 2024">
+                </div>
+                
+                <div class="form-group">
+                    <label for="expiryDays">Link Expires After</label>
+                    <select id="expiryDays">
+                        <option value="7">7 days (default)</option>
+                        <option value="14">14 days</option>
+                        <option value="30">30 days</option>
+                        <option value="1">1 day (test)</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn" id="submitBtn">
+                    🔗 Generate Guest Link
+                </button>
+                
+                <button type="button" class="btn btn-secondary" id="testBtn" style="margin-left: 10px;">
+                    🧪 Fill Test Data
+                </button>
+                
+                <button type="button" class="btn btn-secondary" onclick="debugFormState()" style="margin-left: 10px;">
+                    🐛 Debug Form
+                </button>
+                
+                <button type="button" class="btn" onclick="directCreateLink()" style="margin-left: 10px; background: #dc2626;">
+                    ⚡ Direct Create (Test)
+                </button>
+            </form>
+            
+            <div id="alertContainer"></div>
+            <div id="resultContainer"></div>
+        </div>
+
+        <!-- Active Links Section -->
+        <div class="card">
+            <h2>🔗 Active Guest Links</h2>
+            <p style="color: #6b7280; margin-bottom: 20px;">Recently created guest links</p>
+            
+            <table class="guest-links-table">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Guest URL</th>
+                        <th>Created</th>
+                        <th>Expires</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="linksTableBody">
+                    <!-- Links will be added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Clean, simple implementation
+        const guestLinks = [];
+        
+        // DOM elements
+        const form = document.getElementById('guestLinkForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const testBtn = document.getElementById('testBtn');
+        const alertContainer = document.getElementById('alertContainer');
+        const resultContainer = document.getElementById('resultContainer');
+        const linksTableBody = document.getElementById('linksTableBody');
+        const reportTypeSelect = document.getElementById('reportType');
+        const fileUploadGroup = document.getElementById('fileUploadGroup');
+        const dataFile = document.getElementById('dataFile');
+        const selectedFile = document.getElementById('selectedFile');
+        const dataPreview = document.getElementById('dataPreview');
+        const previewContent = document.getElementById('previewContent');
+        
+        // Report type change handler
+        reportTypeSelect.addEventListener('change', function(e) {
+            if (e.target.value === 'upload') {
+                fileUploadGroup.style.display = 'block';
+            } else {
+                fileUploadGroup.style.display = 'none';
+                dataPreview.style.display = 'none';
+                selectedFile.style.display = 'none';
+            }
+        });
+        
+        // File upload handling
+        dataFile.addEventListener('change', function(e) {
+            handleFileSelect(e.target);
+        });
+        
+        function handleFileSelect(input) {
+            const file = input.files[0];
+            if (file) {
+                selectedFile.style.display = 'block';
+                selectedFile.textContent = `Selected: ${file.name} (${formatFileSize(file.size)})`;
+                
+                // Auto-extract client name from filename if client name is empty
+                const clientNameInput = document.getElementById('clientName');
+                if (!clientNameInput.value.trim() && file.name.toLowerCase().includes('seo')) {
+                    // Extract client name from filename (e.g., "Ygroupremodeling.com_SEO" -> "Y Group Remodeling")
+                    let extractedName = file.name.split('_')[0].replace('.com', '').replace(/([a-z])([A-Z])/g, '$1 $2');
+                    extractedName = extractedName.charAt(0).toUpperCase() + extractedName.slice(1);
+                    clientNameInput.value = extractedName;
+                    console.log('Auto-filled client name:', extractedName);
+                }
+                
+                // Preview data for CSV files
+                if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
+                    previewCSVData(file);
+                } else {
+                    dataPreview.style.display = 'block';
+                    previewContent.textContent = `File: ${file.name}\nType: ${file.type || 'Unknown'}\nSize: ${formatFileSize(file.size)}\n\nPreview available for CSV files only.\nExcel files will be processed when the guest link is created.`;
+                }
+                
+                console.log('File selected:', file.name, 'Size:', formatFileSize(file.size));
+            }
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function previewCSVData(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const csv = e.target.result;
+                const lines = csv.split('\\n').slice(0, 6); // Show first 5 lines + header
+                const preview = lines.join('\\n');
+                
+                dataPreview.style.display = 'block';
+                previewContent.textContent = preview + '\\n\\n... (showing first 5 rows)';
+            };
+            reader.readAsText(file);
+        }
+        
+        // Drag and drop functionality
+        const fileUpload = document.querySelector('.file-upload');
+        
+        if (fileUpload) {
+            fileUpload.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+            
+            fileUpload.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+            });
+            
+            fileUpload.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    dataFile.files = files;
+                    handleFileSelect(dataFile);
+                }
+            });
+        }
+        
+        // Test button functionality
+        testBtn.addEventListener('click', function() {
+            console.log('Test button clicked - filling form data');
+            
+            const clientNameInput = document.getElementById('clientName');
+            const reportPeriodInput = document.getElementById('reportPeriod');
+            const reportTypeSelect = document.getElementById('reportType');
+            
+            // Fill basic data
+            clientNameInput.value = 'Y Group Remodeling';
+            reportPeriodInput.value = 'December 02-07, 2024';
+            
+            // If a file is already uploaded, set to upload type
+            if (dataFile.files && dataFile.files[0]) {
+                reportTypeSelect.value = 'upload';
+                fileUploadGroup.style.display = 'block';
+                console.log('File detected, set report type to upload');
+            } else {
+                reportTypeSelect.value = 'demo';
+                console.log('No file detected, set report type to demo');
+            }
+            
+            showAlert('success', '✅ Test data filled! Client name: "Y Group Remodeling". Ready to generate guest link!');
+        });
+        
+        function createGuestLink(clientName, reportType, reportPeriod, expiryDays, uploadedFile) {
+            const token = generateToken();
+            
+            // Generate professional web URL similar to SE Ranking format
+            // For production, replace 'yourdomain.com' with your actual domain
+            const baseUrl = 'https://yourdomain.com/seo-reports';
+            const guestUrl = `${baseUrl}/guest-report.html?client=${encodeURIComponent(clientName)}&token=${token}&period=${encodeURIComponent(reportPeriod)}&type=${reportType}`;
+            
+            // Also create a local testing URL
+            const localUrl = `guest-report.html?token=${token}`;
+            
+            console.log('Generated guest URL:', guestUrl);
+            console.log('Local testing URL:', localUrl);
+            
+            const createdAt = new Date();
+            const expiresAt = new Date();
+            expiresAt.setDate(expiresAt.getDate() + expiryDays);
+            
+            const guestLink = {
+                id: Date.now(),
+                token: token,
+                clientName: clientName,
+                reportType: reportType,
+                reportPeriod: reportPeriod,
+                guestUrl: guestUrl,
+                localUrl: localUrl,
+                createdAt: createdAt,
+                expiresAt: expiresAt,
+                expiryDays: expiryDays,
+                views: 0,
+                status: 'Active',
+                hasFile: !!uploadedFile,
+                fileName: uploadedFile ? uploadedFile.name : null,
+                fileSize: uploadedFile ? uploadedFile.size : null
+            };
+            
+            guestLinks.push(guestLink);
+            
+            // Save to localStorage
+            try {
+                const saved = JSON.parse(localStorage.getItem('guestLinks') || '[]');
+                saved.push(guestLink);
+                localStorage.setItem('guestLinks', JSON.stringify(saved));
+                console.log('Guest link saved with file data:', guestLink.fileName || 'No file');
+            } catch (e) {
+                console.warn('LocalStorage error:', e);
+            }
+            
+            return guestLink;
+        }
+        
+        function generateToken() {
+            return Array.from({length: 32}, () => Math.floor(Math.random() * 16).toString(16)).join('');
+        }
+        
+        function showGeneratedLink(guestLink) {
+            const fileInfo = guestLink.hasFile ? 
+                `<div class="link-details">
+                    <strong>File:</strong>
+                    <span>${guestLink.fileName} (${formatFileSize(guestLink.fileSize)})</span>
+                </div>` : '';
+            
+            const html = `
+                <div class="generated-link">
+                    <h3>✅ Guest Link Created Successfully!</h3>
+                    <div class="link-details">
+                        <strong>Client:</strong>
+                        <span>${guestLink.clientName}</span>
+                        <strong>Type:</strong>
+                        <span>${guestLink.reportType === 'demo' ? 'Demo Report' : 'Custom Data Upload'}</span>
+                        <strong>Period:</strong>
+                        <span>${guestLink.reportPeriod}</span>
+                        <strong>Expires:</strong>
+                        <span>${guestLink.expiresAt.toLocaleDateString()} (${guestLink.expiryDays} days)</span>
+                    </div>
+                    ${fileInfo}
+                    
+                    <div class="copy-link">
+                        <div style="margin-bottom: 15px;">
+                            <strong>🌐 Production Guest URL:</strong><br>
+                            <span style="word-break: break-all; font-family: monospace; font-size: 12px;">${guestLink.guestUrl}</span>
+                            <button class="copy-btn" onclick="copyToClipboard('${guestLink.guestUrl}')">📋 Copy</button>
+                        </div>
+                        <div>
+                            <strong>🧪 Local Testing URL:</strong><br>
+                            <span style="word-break: break-all; font-family: monospace; font-size: 12px;">${guestLink.localUrl}</span>
+                            <button class="copy-btn" onclick="copyToClipboard('${guestLink.localUrl}')">📋 Copy</button>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 15px; padding: 15px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 6px; font-size: 14px; color: #92400e;">
+                        <strong>⚠️ Setup Required:</strong><br>
+                        1. <strong>Upload files</strong> to your web server at: <code>yourdomain.com/seo-reports/</code><br>
+                        2. <strong>Replace "yourdomain.com"</strong> with your actual domain in the code<br>
+                        3. <strong>Test locally first</strong> using the local URL above<br>
+                        4. <strong>Share production URL</strong> with clients once hosted
+                    </div>
+                    
+                    <div style="margin-top: 10px; padding: 10px; background: #f0f9ff; border-radius: 6px; font-size: 14px; color: #1e40af;">
+                        💡 <strong>Quick Test:</strong> <a href="computer:///mnt/user-data/outputs/guest-report.html?token=${guestLink.token}" style="color: #2563eb;">Open Local Version</a>
+                    </div>
+                    
+                    <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-success" onclick="openGuestLink('${guestLink.guestUrl}')">👁️ Preview Report</button>
+                        <button class="btn" onclick="copyToClipboard('${guestLink.guestUrl}')">📋 Copy Link</button>
+                        <button class="btn btn-secondary" onclick="testLink('${guestLink.token}')">🧪 Test Link</button>
+                    </div>
+                </div>
+            `;
+            
+            resultContainer.innerHTML = html;
+        }
+        
+        function addToTable(guestLink) {
+            const row = linksTableBody.insertRow(0);
+            const shortUrl = guestLink.guestUrl.length > 50 ? guestLink.guestUrl.substring(0, 50) + '...' : guestLink.guestUrl;
+            
+            row.innerHTML = `
+                <td>${guestLink.clientName}</td>
+                <td><code style="font-size: 11px;">${shortUrl}</code></td>
+                <td>${guestLink.createdAt.toLocaleDateString()}</td>
+                <td>${guestLink.expiresAt.toLocaleDateString()}</td>
+                <td><span class="status-active">${guestLink.status}</span></td>
+                <td>
+                    <button class="btn btn-secondary" onclick="copyToClipboard('${guestLink.guestUrl}')" style="padding: 6px 12px; font-size: 12px;">📋</button>
+                    <button class="btn btn-secondary" onclick="openGuestLink('${guestLink.guestUrl}')" style="padding: 6px 12px; font-size: 12px; margin-left: 8px;">👁️</button>
+                </td>
+            `;
+        }
+        
+        function showAlert(type, message) {
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            alertContainer.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+            
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 5000);
+        }
+        
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showAlert('success', 'Link copied to clipboard! 📋');
+            });
+        }
+        
+        function openGuestLink(url) {
+            console.log('Opening guest link:', url);
+            window.open(url, '_blank');
+        }
+        
+        function testLink(token) {
+            const saved = localStorage.getItem('guestLinks');
+            if (saved) {
+                const links = JSON.parse(saved);
+                const link = links.find(l => l.token === token);
+                if (link) {
+                    alert(`✅ Test Passed!\\n\\nToken: ${token.substring(0, 8)}...\\nClient: ${link.clientName}\\nExpires: ${new Date(link.expiresAt).toLocaleDateString()}\\n\\nLink is valid and ready to share!`);
+                } else {
+                    alert('❌ Test Failed: Link not found');
+                }
+            } else {
+                alert('❌ Test Failed: No links data found');
+            }
+        }
+        
+        // Debug function to check form state
+        function debugFormState() {
+            console.log('=== DEBUG FORM STATE ===');
+            const clientName = document.getElementById('clientName').value;
+            const reportType = document.getElementById('reportType').value;
+            const reportPeriod = document.getElementById('reportPeriod').value;
+            const expiryDays = document.getElementById('expiryDays').value;
+            const uploadedFile = dataFile.files[0];
+            
+            console.log('Form element:', form);
+            console.log('Submit button:', submitBtn);
+            console.log('Client Name field:', document.getElementById('clientName'));
+            console.log('Client Name value:', `"${clientName}"`);
+            console.log('Report Type:', reportType);
+            console.log('Report Period:', reportPeriod);
+            console.log('Expiry Days:', expiryDays);
+            console.log('File input:', dataFile);
+            console.log('Uploaded file:', uploadedFile);
+            console.log('File name:', uploadedFile ? uploadedFile.name : 'No file');
+            
+            // Test the validation
+            if (!clientName.trim()) {
+                console.error('❌ CLIENT NAME IS EMPTY OR WHITESPACE');
+            } else {
+                console.log('✅ Client name is valid:', `"${clientName.trim()}"`);
+            }
+            
+            if (reportType === 'upload' && !uploadedFile) {
+                console.error('❌ UPLOAD TYPE BUT NO FILE');
+            } else {
+                console.log('✅ File validation passed');
+            }
+            
+            console.log('=== END DEBUG ===');
+        }
+        
+        // Direct create function for testing
+        function directCreateLink() {
+            console.log('DIRECT CREATE LINK TRIGGERED - BYPASSING FORM');
+            
+            try {
+                const clientName = document.getElementById('clientName').value || 'Test Client Direct';
+                const reportType = document.getElementById('reportType').value;
+                const reportPeriod = document.getElementById('reportPeriod').value;
+                const expiryDays = 7;
+                const uploadedFile = dataFile.files[0];
+                
+                console.log('Direct create with data:', {
+                    clientName,
+                    reportType, 
+                    reportPeriod,
+                    uploadedFile: uploadedFile ? uploadedFile.name : 'None'
+                });
+                
+                // Show loading
+                const directBtn = event.target;
+                directBtn.disabled = true;
+                directBtn.innerHTML = '⚡ Creating...';
+                
+                setTimeout(() => {
+                    try {
+                        const guestLink = createGuestLink(clientName, reportType, reportPeriod, expiryDays, uploadedFile);
+                        console.log('DIRECT CREATE SUCCESS:', guestLink.token.substring(0, 8) + '...');
+                        
+                        showGeneratedLink(guestLink);
+                        addToTable(guestLink);
+                        showAlert('success', '✅ Direct guest link created successfully!');
+                        
+                    } catch (error) {
+                        console.error('DIRECT CREATE ERROR:', error);
+                        showAlert('error', 'Direct create failed: ' + error.message);
+                    } finally {
+                        directBtn.disabled = false;
+                        directBtn.innerHTML = '⚡ Direct Create (Test)';
+                    }
+                }, 500);
+                
+            } catch (error) {
+                console.error('DIRECT CREATE SETUP ERROR:', error);
+                showAlert('error', 'Setup error: ' + error.message);
+            }
+        }
+        
+        // Manual form submission function for debugging
+        function manualSubmit() {
+            console.log('MANUAL SUBMIT TRIGGERED');
+            
+            // Manually trigger the form submission
+            const event = new Event('submit');
+            form.dispatchEvent(event);
+        }
+        // Load existing links on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded successfully - no errors!');
+            
+            // Double-check form listener is attached
+            console.log('Checking form event listeners...');
+            console.log('Form element:', form);
+            console.log('Submit button:', submitBtn);
+            
+            // SET UP FORM SUBMISSION HANDLER HERE
+            if (form) {
+                console.log('Setting up form submission handler...');
+                
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    console.log('=== FORM SUBMISSION START ===');
+                    
+                    const clientName = document.getElementById('clientName').value.trim();
+                    const reportType = document.getElementById('reportType').value;
+                    const reportPeriod = document.getElementById('reportPeriod').value;
+                    const expiryDays = parseInt(document.getElementById('expiryDays').value);
+                    const uploadedFile = dataFile.files[0];
+                    
+                    console.log('Form data collected:');
+                    console.log('- Client Name:', clientName || 'EMPTY!');
+                    console.log('- Report Type:', reportType);
+                    console.log('- Report Period:', reportPeriod);
+                    console.log('- Expiry Days:', expiryDays);
+                    console.log('- Uploaded File:', uploadedFile ? uploadedFile.name : 'None');
+                    
+                    // Validation with detailed logging
+                    if (!clientName) {
+                        console.error('VALIDATION FAILED: Client name is empty');
+                        showAlert('error', 'Please enter a client name.');
+                        return;
+                    }
+                    
+                    if (reportType === 'upload' && !uploadedFile) {
+                        console.error('VALIDATION FAILED: Upload type selected but no file');
+                        showAlert('error', 'Please select a data file for upload.');
+                        return;
+                    }
+                    
+                    console.log('Validation passed, proceeding with link creation...');
+                    
+                    // Show loading
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '🔗 Generating... ⏳';
+                    console.log('Loading state activated');
+                    
+                    // Generate guest link
+                    setTimeout(() => {
+                        try {
+                            console.log('Creating guest link...');
+                            const guestLink = createGuestLink(clientName, reportType, reportPeriod, expiryDays, uploadedFile);
+                            console.log('Guest link created successfully:', guestLink.token.substring(0, 8) + '...');
+                            
+                            showGeneratedLink(guestLink);
+                            addToTable(guestLink);
+                            showAlert('success', '✅ Guest link created successfully!');
+                            
+                            console.log('=== GUEST LINK GENERATION COMPLETE ===');
+                            
+                            // Reset form
+                            form.reset();
+                            document.getElementById('reportPeriod').value = 'December 02-07, 2024';
+                            fileUploadGroup.style.display = 'none';
+                            dataPreview.style.display = 'none';
+                            selectedFile.style.display = 'none';
+                            
+                        } catch (error) {
+                            console.error('ERROR during guest link creation:', error);
+                            showAlert('error', 'Error creating guest link: ' + error.message);
+                        } finally {
+                            // Reset button
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '🔗 Generate Guest Link';
+                            console.log('Button reset to normal state');
+                        }
+                    }, 1000);
+                });
+                
+                console.log('✅ Form submission handler attached successfully!');
+            } else {
+                console.error('❌ Form element not found!');
+            }
+            
+            // Add backup event listener just in case
+            if (submitBtn) {
+                submitBtn.addEventListener('click', function(e) {
+                    console.log('BACKUP SUBMIT BUTTON CLICKED');
+                    if (e.target.type === 'submit') {
+                        console.log('Submit type detected, manually triggering form submit event');
+                        
+                        // First try to dispatch the event
+                        const submitEvent = new Event('submit', {
+                            bubbles: true,
+                            cancelable: true
+                        });
+                        
+                        console.log('Dispatching submit event...');
+                        const dispatched = form.dispatchEvent(submitEvent);
+                        console.log('Event dispatched result:', dispatched);
+                        
+                        // If that doesn't work, call the handler directly after a short delay
+                        setTimeout(() => {
+                            if (!submitBtn.disabled) { // If button wasn't disabled, the form handler didn't run
+                                console.log('⚠️ Form event did not trigger, calling handler directly...');
+                                handleFormSubmissionDirect();
+                            }
+                        }, 100);
+                    }
+                });
+            }
+            
+            // Direct form submission handler as backup
+            function handleFormSubmissionDirect() {
+                console.log('=== DIRECT FORM SUBMISSION START ===');
+                
+                const clientName = document.getElementById('clientName').value.trim();
+                const reportType = document.getElementById('reportType').value;
+                const reportPeriod = document.getElementById('reportPeriod').value;
+                const expiryDays = parseInt(document.getElementById('expiryDays').value);
+                const uploadedFile = dataFile.files[0];
+                
+                console.log('Direct form data collected:');
+                console.log('- Client Name:', clientName || 'EMPTY!');
+                console.log('- Report Type:', reportType);
+                console.log('- Report Period:', reportPeriod);
+                console.log('- Expiry Days:', expiryDays);
+                console.log('- Uploaded File:', uploadedFile ? uploadedFile.name : 'None');
+                
+                // Validation
+                if (!clientName) {
+                    console.error('DIRECT VALIDATION FAILED: Client name is empty');
+                    showAlert('error', 'Please enter a client name.');
+                    return;
+                }
+                
+                if (reportType === 'upload' && !uploadedFile) {
+                    console.error('DIRECT VALIDATION FAILED: Upload type selected but no file');
+                    showAlert('error', 'Please select a data file for upload.');
+                    return;
+                }
+                
+                console.log('Direct validation passed, proceeding with link creation...');
+                
+                // Show loading
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '🔗 Generating... ⏳';
+                console.log('Direct loading state activated');
+                
+                // Generate guest link
+                setTimeout(() => {
+                    try {
+                        console.log('Direct creating guest link...');
+                        const guestLink = createGuestLink(clientName, reportType, reportPeriod, expiryDays, uploadedFile);
+                        console.log('Direct guest link created successfully:', guestLink.token.substring(0, 8) + '...');
+                        
+                        showGeneratedLink(guestLink);
+                        addToTable(guestLink);
+                        showAlert('success', '✅ Guest link created successfully! (Direct method)');
+                        
+                        console.log('=== DIRECT GUEST LINK GENERATION COMPLETE ===');
+                        
+                        // Reset form
+                        form.reset();
+                        document.getElementById('reportPeriod').value = 'December 02-07, 2024';
+                        fileUploadGroup.style.display = 'none';
+                        dataPreview.style.display = 'none';
+                        selectedFile.style.display = 'none';
+                        
+                    } catch (error) {
+                        console.error('DIRECT ERROR during guest link creation:', error);
+                        showAlert('error', 'Error creating guest link: ' + error.message);
+                    } finally {
+                        // Reset button
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '🔗 Generate Guest Link';
+                        console.log('Direct button reset to normal state');
+                    }
+                }, 1000);
+            }
+            
+            try {
+                const saved = localStorage.getItem('guestLinks');
+                if (saved) {
+                    const links = JSON.parse(saved);
+                    console.log('Loaded', links.length, 'existing links');
+                    
+                    links.reverse().forEach(linkData => {
+                        const link = {
+                            ...linkData,
+                            createdAt: new Date(linkData.createdAt),
+                            expiresAt: new Date(linkData.expiresAt)
+                        };
+                        
+                        if (link.expiresAt < new Date()) {
+                            link.status = 'Expired';
+                        }
+                        
+                        addToTable(link);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading links:', error);
+            }
+            
+            console.log('Initialization complete - everything working!');
+        });
+    </script>
+</body>
+</html>
